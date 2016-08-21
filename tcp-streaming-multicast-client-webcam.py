@@ -32,16 +32,16 @@ COLOR_PIXEL = 3  # RGB
 
 
 if __name__ == '__main__':
-    mysock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    mysock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    mysock.settimeout(TIMEOUT_SOCKET)
-    mysock.connect((IP_SERVER, PORT_SERVER))
+    connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    connection.settimeout(TIMEOUT_SOCKET)
+    connection.connect((IP_SERVER, PORT_SERVER))
 
     while True:
         try:
-            rfileobj = mysock.makefile(mode='rb')
-            result = rfileobj.readline()
-            rfileobj.close()
+            fileDescriptor = connection.makefile(mode='rb')
+            result = fileDescriptor.readline()
+            fileDescriptor.close()
             result = base64.b64decode(result)
 
             frame = np.fromstring(result, dtype=np.uint8)
@@ -56,4 +56,4 @@ if __name__ == '__main__':
         except Exception as e:
             print "[Error] " + str(e)
 
-    mysock.close()
+    connection.close()

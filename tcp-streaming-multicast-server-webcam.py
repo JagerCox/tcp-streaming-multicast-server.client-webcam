@@ -27,16 +27,17 @@ __email__ = "jagercox@gmail.com"
 SERVER_IP = "0.0.0.0"
 SERVER_PORT = 953
 MAX_NUM_CONNECTIONS = 20
+DEVICE_NUMBER = 1
 
 
 class ConnectionPool(Thread):
 
-    def __init__(self, ip, port, conn, device):
+    def __init__(self, ip_, port_, conn_, device_):
         Thread.__init__(self)
-        self.ip = ip
-        self.port = port
-        self.conn = conn
-        self.device = device
+        self.ip = ip_
+        self.port = port_
+        self.conn = conn_
+        self.device = device_
         print "[+] New server socket thread started for " + self.ip + ":" + \
             str(self.port)
 
@@ -46,12 +47,13 @@ class ConnectionPool(Thread):
                 ret, frame = self.device.read()
                 data = frame.tostring()
                 self.conn.sendall(base64.b64encode(data) + '\r\n')
-        except:
-            print "Connection lost with " + self.ip + ":" + str(self.port)
+        except Exception, e:
+            print "Connection lost with " + self.ip + ":" + str(self.port) + \
+                  "\r\n[Error] " + str(e.message)
         self.conn.close()
 
 if __name__ == '__main__':
-    camera = cv2.VideoCapture(0)
+    camera = cv2.VideoCapture(DEVICE_NUMBER)
     print "Waiting connections..."
     connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
